@@ -80,7 +80,7 @@ The requirements establish *what* to build clearly. The following questions focu
 - **Rationale**: The MVP goal is to demonstrate that S3 integration works. Static credentials are the simplest, most portable approach. Session token lifecycle complexity adds no demo value.
 - **Trade-offs**: Option A is simpler but cannot be used with IAM Role assumption or MFA-enforced policies. Option B covers more production authentication patterns at the cost of a more complex credential model.
 - **Requirement Impact**: None — the "AWS Credentials" field is already specified in requirements; this decision determines how users populate it.
-- **User's Answer**: **Option A** — Static Access Key ID + Secret Access Key only
+- **User's Answer**: **Option A** — Static Access Key + Secret only. For an MVP/demo, permanent IAM user credentials are universally understood, require no STS infrastructure setup, and keep the credential model simple.
 
 ---
 
@@ -114,7 +114,7 @@ The requirements establish *what* to build clearly. The following questions focu
 - **Rationale**: Demo extensions benefit significantly from clear visual output. tabulate is a single lightweight dependency with no platform concerns.
 - **Trade-offs**: The table approach adds one dependency but greatly improves readability. Plain text is marginally simpler but less impactful for a demo audience.
 - **Requirement Impact**: `requirements.txt` will include: `boto3==1.43.97`, `botocore==1.43.97`, `s3transfer==0.19.2`, `tabulate==0.10.0`
-- **User's Answer**: **Include tabulate** for formatted ASCII table output
+- **User's Answer**: **Include tabulate** for ASCII table output. For a demo integration, the table format makes List Objects results visually clear and professional with minimal added complexity.
 
 ---
 
@@ -153,7 +153,7 @@ The requirements establish *what* to build clearly. The following questions focu
 - **Rationale**: Key + Size + LastModified is the most practically useful combination for a demo audience. ETag and StorageClass are rarely meaningful in a live demo context and would widen the table unnecessarily.
 - **Trade-offs**: More columns provide richer information but may require a wider terminal; fewer columns are cleaner but less informative for demonstrating the integration's value.
 - **Requirement Impact**: None
-- **User's Answer**: **STDOUT Option B** + **Extension Output Option B**
+- **User's Answer**: **STDOUT Option B** (Key + Size + Last Modified) and **Extension Output Option B** (objects with key, size_bytes, last_modified)
 
 ---
 
@@ -174,7 +174,7 @@ The requirements establish *what* to build clearly. The following questions focu
 - **Rationale**: A cap of 100 is more than sufficient for a demo, prevents UAC database bloat, and gives operators a simple knob to increase the limit without code changes.
 - **Trade-offs**: Option A is slightly more code to implement but safe for any bucket size. Option B is simpler but exposes the UAC task to potentially large uncontrolled output. Option C is the most complete but risky and unnecessary for an MVP.
 - **Requirement Impact**: None
-- **User's Answer**: **Option A** — cap at `UE_MAX_OUTPUT_RECORDS` (default: 100)
+- **User's Answer**: **Option A** — cap at `UE_MAX_OUTPUT_RECORDS` with a default of 100
 
 ---
 
@@ -202,7 +202,7 @@ The requirements establish *what* to build clearly. The following questions focu
 - **Rationale**: For STDOUT, the S3 URI is the most immediately useful confirmation a human reader needs — it tells them exactly where the file went. For the machine-readable Extension Output, adding the ETag enables downstream integrity checks without making the human-facing output verbose.
 - **Trade-offs**: STDOUT Option A keeps human output clean and focused. Including ETag only in Extension Output makes it available for automation without cluttering the task log.
 - **Requirement Impact**: None
-- **User's Answer**: **STDOUT Option A**, **Extension Output Option B**
+- **User's Answer**: **STDOUT Option A** (clean, human-readable S3 URI) and **Extension Output Option B** (S3 URI + ETag for downstream integrity verification)
 
 ---
 
@@ -226,7 +226,7 @@ The requirements establish *what* to build clearly. The following questions focu
 - **Rationale**: Two targeted output fields provide just enough at-a-glance information per action without adding UI clutter. Option C with three fields would always leave one field empty, which can confuse users in the task list view.
 - **Trade-offs**: Option A is clean and action-aware. Option B is the simplest but requires opening task logs for any detail. Option C is maximally informative but includes a persistently empty field.
 - **Requirement Impact**: None
-- **User's Answer**: **Option A** — Status + action-specific output field (Object Count for List; S3 URI for Upload)
+- **User's Answer**: **Option A** — Status + one action-specific output field
 
 ---
 
@@ -251,4 +251,4 @@ The requirements establish *what* to build clearly. The following questions focu
 - **Rationale**: `us-east-1` is AWS's most commonly used region globally, making it the natural default for demo purposes. A text field (rather than a choice list) keeps the implementation simple and supports any current or future AWS region without code changes.
 - **Trade-offs**: A default reduces setup friction but may create silent mismatches if a user's bucket is in a different region and they forget to change the field. A text field accepts any region name including misspellings; a choice field prevents typos but requires maintenance as new regions are added by AWS.
 - **Requirement Impact**: The AWS Region field would be a text field with `us-east-1` as its default value.
-- **User's Answer**: **Option A** — text field with default value `us-east-1`
+- **User's Answer**: **Option A** — text field with default `us-east-1`
