@@ -10,20 +10,15 @@ from fields.types import Text
 class OutputFields:
     """Real-time output fields for UAC UI updates.
 
-    Define fields for progress tracking during execution.
-    These fields sync with the UAC UI in real-time and are available
-    in subsequent re-runs via InputFields.previous_output.
-
-    All output fields should use the Text wrapper type.
+    Fields correspond to Output Only fields defined in template.json:
+    - status       (Text Field 5): Short summary of the action result
+    - object_count (Text Field 6): Number of S3 objects listed (List Objects action)
+    - s3_uri       (Text Field 7): Full S3 URI of uploaded object (Upload File action)
     """
 
-    # Define your progress tracking fields here using Text wrapper
-    # Example fields:
-    # status: Optional[Text] = None
-    # progress: Optional[Text] = None
-    # current_item: Optional[Text] = None
-    # items_processed: Optional[Text] = None
-    # last_processed_id: Optional[Text] = None
+    status: Optional[Text] = None
+    object_count: Optional[Text] = None
+    s3_uri: Optional[Text] = None
 
     def update(self, **fields):
         """Update fields and sync with UAC UI in real-time.
@@ -53,14 +48,7 @@ class OutputFields:
         return result
 
     def clear(self):
-        """Reset all fields to None.
-
-        Update this method to match your defined fields.
-        """
-        # Add your fields here
-        # self.status = None
-        # self.progress = None
-        # self.current_item = None
-        # self.items_processed = None
-        # self.last_processed_id = None
-        pass
+        """Reset all fields to None."""
+        self.status = None
+        self.object_count = None
+        self.s3_uri = None
